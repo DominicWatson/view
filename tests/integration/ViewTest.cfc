@@ -23,7 +23,7 @@
 				viewPath = viewPath
 			);
 
-			AssertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
+			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
 		</cfscript>
 	</cffunction>
 
@@ -38,7 +38,27 @@
 
 			data.someVar = "Testing 123";
 
-			AssertEquals( expectedOutput, view.render( view="someFolder.aView", data=data ) );
+			super.assertEquals( expectedOutput, view.render( view="someFolder.aView", data=data ) );
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="t03_renderView_shouldThrowError_whenViewDoesNotExist" returntype="void">
+		<cfscript>
+			var viewPath = _getResourcePath() & "/workingViewTest";
+			var failed   = false;
+			var view     = _getView().init(
+				viewPath = viewPath
+			);
+
+			try {
+				view.render( "non.existant.view" );
+
+			} catch ( "view.notfound" e ) {
+				failed = true;
+				super.assertEquals( "View not found. The view, 'non.existant.view', could not be found.", e.message );
+			}
+
+			super.assert( failed, "View did not throw an appropriate error when the passed view did not exist." );
 		</cfscript>
 	</cffunction>
 

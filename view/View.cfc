@@ -63,7 +63,7 @@
 				return views[ view ];
 			}
 
-			// todo: throw error
+			$throw( "view.notfound", "View not found. The view, '#view#', could not be found." );
 		</cfscript>
 	</cffunction>
 
