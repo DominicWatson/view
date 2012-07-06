@@ -9,14 +9,15 @@
 	--->
 	<cffunction name="render" access="public" returntype="string" output="false">
 		<cfargument name="__viewPath" type="string" required="true" />
+		<cfargument name="__data"     type="struct" required="true" />
 
 		<cfscript>
 			var loc  = StructNew();
-			var args = arguments;
+			var args = arguments.__data;
 		</cfscript>
 
 		<cfsavecontent variable="loc.result">
-			<cfinclude template="#args.__viewPath#" />
+			<cfinclude template="#__viewPath#" />
 		</cfsavecontent>
 
 		<cfreturn Trim( loc.result ) />

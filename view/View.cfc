@@ -22,14 +22,10 @@
 		<cfargument name="data" type="struct" required="false" default="#StructNew()#" />
 
 		<cfscript>
-			var path   = _getView( view ).path;
-			var result = "";
-
-			data['__viewPath'] = path;
-			result = _getViewRenderer().render( argumentCollection = data );
-			StructDelete( data, '__viewPath' );
-
-			return result;
+			return _getViewRenderer().render(
+				  __viewPath = _getView( view ).path
+				, __data     = data
+			);
 		</cfscript>
 	</cffunction>
 
