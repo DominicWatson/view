@@ -10,6 +10,7 @@
 
 		<cfscript>
 			_setViewPath( viewPath );
+			_initViewRenderer();
 			_loadViews();
 
 			return this;
@@ -17,18 +18,19 @@
 	</cffunction>
 
 	<cffunction name="render" access="public" returntype="string" output="false">
-		<cfargument name="view" type="string" required="true" />
+		<cfargument name="view" type="string" required="true"                          />
+		<cfargument name="data" type="struct" required="false" default="#StructNew()#" />
 
 		<cfscript>
-			var path = $calculateRelativePath( getCurrentTemplatePath(), _getView( view ).path );
-			var rendered = "";
+			var path   = _getView( view ).path;
+			var result = "";
+
+			data['__viewPath'] = path;
+			result = _getViewRenderer().render( argumentCollection = data );
+			StructDelete( data, '__viewPath' );
+
+			return result;
 		</cfscript>
-
-		<cfsavecontent variable="rendered">
-			<cfinclude template="#path#" />
-		</cfsavecontent>
-
-		<cfreturn Trim( rendered ) />
 	</cffunction>
 
 <!--- private --->
@@ -80,6 +82,13 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="_initViewRenderer" access="private" returntype="void" output="false">
+		<cfscript>
+			var vr = CreateObject( "component", "util.ViewRenderer" );
+			_setViewRenderer( vr );
+		</cfscript>
+	</cffunction>
+
 <!--- accessors --->
 	<cffunction name="_getViews" access="private" returntype="struct" output="false">
 		<cfreturn _views>
@@ -95,5 +104,13 @@
 	<cffunction name="_setViewPath" access="private" returntype="void" output="false">
 		<cfargument name="viewPath" type="string" required="true" />
 		<cfset _viewPath = $normalizeUnixAndWindowsPaths( $ensureFullDirectoryPath( viewPath ) ) />
+	</cffunction>
+
+	<cffunction name="_getViewRenderer" access="private" returntype="any" output="false">
+		<cfreturn _viewRenderer>
+	</cffunction>
+	<cffunction name="_setViewRenderer" access="private" returntype="void" output="false">
+		<cfargument name="viewRenderer" type="any" required="true" />
+		<cfset _viewRenderer = arguments.viewRenderer />
 	</cffunction>
 </cfcomponent>

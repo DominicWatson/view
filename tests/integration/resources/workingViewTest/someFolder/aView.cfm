@@ -1,7 +1,7 @@
 <!---
-	@someVar
+	@someVar string
 --->
 
 <cfoutput>
-	<h1>#@someVar#</h1>
+	<h1>#args.someVar#</h1>
 </cfoutput>

@@ -23,7 +23,22 @@
 				viewPath = viewPath
 			);
 
-			AssertEquals( expectedOutput, view.render( view="anotherFolder.someView", layout=false ) );
+			AssertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="t02_renderView_shouldRenderPassedVariables" returntype="void">
+		<cfscript>
+			var viewPath       = _getResourcePath() & "/workingViewTest";
+			var expectedOutput = "<h1>Testing 123</h1>";
+			var data           = StructNew();
+			var view           = _getView().init(
+				viewPath = viewPath
+			);
+
+			data.someVar = "Testing 123";
+
+			AssertEquals( expectedOutput, view.render( view="someFolder.aView", data=data ) );
 		</cfscript>
 	</cffunction>
 
