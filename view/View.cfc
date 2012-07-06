@@ -46,7 +46,7 @@
 				filePath      = $listAppend( files.directory[i], files.name[i], '/' );
 				view          = _convertFullViewPathToViewName( filePath );
 				views[ view ] = StructNew();
-				views[ view ].path = filePath;
+				views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
 			}
 
 			_setViews( views );
@@ -79,6 +79,16 @@
 			viewName = Left( viewName, Len(viewName) - 4 );
 
 			return viewName;
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="_convertFullPathToRelativePathForCfInclude" access="private" returntype="any" output="false">
+		<cfargument name="fullPath" type="string" required="true" />
+
+		<cfscript>
+			var basePath = $listAppend( GetDirectoryFromPath( GetCurrentTemplatePath() ), 'util/ViewRenderer.cfc', '/' );
+
+			return $calculateRelativePath( basePath, fullPath );
 		</cfscript>
 	</cffunction>
 
