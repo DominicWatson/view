@@ -1,3 +1,3 @@
 <cfscript>
-	variables.someVar = "I shouldn't be able to do this!";
+	thisWillBeInTheVariablesScope = "and I shouldn't be allowed to do this!";
 </cfscript>
