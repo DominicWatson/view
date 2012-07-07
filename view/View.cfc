@@ -1,8 +1,8 @@
 <cfcomponent output="false" extends="util.Base">
 
 	<cfscript>
-		_views    = StructNew();
-		_viewPath = "";
+		_views     = StructNew();
+		_viewPaths = ArrayNew(1);
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false">
