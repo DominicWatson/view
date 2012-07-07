@@ -122,9 +122,8 @@
 					, data = data
 				);
 
-			} catch ( any e ) {
-				failed = true;
-				writeDump( e );abort;
+			} catch ( expression e ) {
+				failed = e.message contains "iHaveBeenPassedButNotParamed";
 			}
 
 			super.assert( failed, "The View framework passed a variable to the view, even though it was not cfparamed" );

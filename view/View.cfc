@@ -22,9 +22,19 @@
 		<cfargument name="data" type="struct" required="false" default="#StructNew()#" />
 
 		<cfscript>
+			var view = _getView( view );
+			var args = StructNew();
+			var i    = "";
+
+			for( i=1; i LTE ArrayLen( view.args ); i++ ) {
+				if ( StructKeyExists( data, view.args[i] ) ) {
+					args[ view.args[i] ] = data[ view.args[i] ];
+				}
+			}
+
 			return _getViewRenderer().render(
-				  __viewPath = _getView( view ).path
-				, __data     = data
+				  __viewPath = view.path
+				, __data     = args
 			);
 		</cfscript>
 	</cffunction>
@@ -48,6 +58,7 @@
 					view          = _convertFullViewPathToViewName( filePath, viewPaths[i] );
 					views[ view ] = StructNew();
 					views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
+					views[ view ].args = _parseArgsFromCfParam( filePath );
 				}
 			}
 
@@ -91,6 +102,22 @@
 			var basePath = $listAppend( GetDirectoryFromPath( GetCurrentTemplatePath() ), 'util/ViewRenderer.cfc', '/' );
 
 			return $calculateRelativePath( basePath, fullPath );
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="_parseArgsFromCfParam" access="private" returntype="array" output="false">
+		<cfargument name="filePath" type="string" required="true" />
+
+		<cfscript>
+			var fileContent = $fileRead( filePath );
+			var regex       = '<cfparam name="args\.(.*?)"';
+			var regexResult = $research( regex, fileContent );
+
+			if ( StructKeyExists( regexResult, "$1" ) ) {
+				return regexResult.$1;
+			}
+
+			return ArrayNew(1);
 		</cfscript>
 	</cffunction>
 
