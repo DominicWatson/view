@@ -104,6 +104,33 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t06_view_shouldOnlyBePassedDataThatHasBeenCfParamd" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var data           = StructNew();
+			var failed         = false;
+			var view           = _getView().init(
+				viewPaths = viewPaths
+			);
+
+			data.someVar                      = "Testing 123";
+			data.iHaveBeenPassedButNotParamed = "whatever";
+
+			try {
+				view.render(
+					  view = "someFolder.aViewAccessingUnParametrizedVar"
+					, data = data
+				);
+
+			} catch ( any e ) {
+				failed = true;
+				writeDump( e );abort;
+			}
+
+			super.assert( failed, "The View framework passed a variable to the view, even though it was not cfparamed" );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
