@@ -86,6 +86,7 @@
 	<cffunction name="t05_views_shouldBePreventedFromAlteringVariablesScope" returntype="void">
 		<cfscript>
 			var viewPaths = _getResourcePath() & "/workingViewTest";
+			var viewPath  = Replace( ExpandPath( viewPaths & '/badViews/alteringVariablesScope.cfm' ), '\', '/', 'all' );
 			var failed    = false;
 			var view      = _getView().init(
 				viewPaths = viewPaths
@@ -96,7 +97,7 @@
 
 			} catch ( "view.scope.altered" e ) {
 				failed = true;
-				super.assertEquals( "Scope altered in view, 'badViews.alteringVariablesScope'. To use variables local to your view, use the 'loc' scope.", e.message );
+				super.assertEquals( "Scope altered in view, '#viewPath#'. To use variables local to your view, use the 'loc' scope.", e.message );
 			}
 
 			super.assert( failed, "View did not throw an appropriate error when the passed view altered variables scope." );

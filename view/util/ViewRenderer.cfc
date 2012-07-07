@@ -14,11 +14,17 @@
 		<cfscript>
 			var loc  = StructNew();
 			var args = arguments.__data;
+
+			loc.__state = serializeJson( variables );
 		</cfscript>
 
 		<cfsavecontent variable="loc.result">
 			<cfinclude template="#__viewPath#" />
 		</cfsavecontent>
+
+		<cfif loc.__state NEQ serializeJson( variables )>
+			<cfthrow type="view.scope.altered" message="Scope altered in view, '#Replace( ExpandPath( __viewPath ), '\', '/', 'all' )#'. To use variables local to your view, use the 'loc' scope." />
+		</cfif>
 
 		<cfreturn Trim( loc.result ) />
 	</cffunction>
