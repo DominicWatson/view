@@ -6,10 +6,10 @@
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="viewPath" type="string" required="true" />
+		<cfargument name="viewPaths" type="string" required="true" />
 
 		<cfscript>
-			_setViewPath( viewPath );
+			_setViewPaths( viewPaths );
 			_initViewRenderer();
 			_loadViews();
 
@@ -32,17 +32,23 @@
 <!--- private --->
 	<cffunction name="_loadViews" access="private" returntype="void" output="false">
 		<cfscript>
-			var files    = $directoryList( _getViewPath(), "*.cfm" );
+			var viewPaths = _getViewPaths();
+			var files    = "";
 			var filePath = "";
 			var views    = StructNew();
 			var view     = "";
 			var i        = "";
+			var n        = "";
 
-			for( i=1; i LTE files.recordCount; i++ ){
-				filePath      = $listAppend( files.directory[i], files.name[i], '/' );
-				view          = _convertFullViewPathToViewName( filePath );
-				views[ view ] = StructNew();
-				views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
+			for( i=1; i LTE ArrayLen( viewPaths ); i++ ){
+				files = $directoryList( viewPaths[i], "*.cfm" )
+
+				for( n=1; n LTE files.recordCount; n++ ){
+					filePath      = $listAppend( files.directory[n], files.name[n], '/' );
+					view          = _convertFullViewPathToViewName( filePath, viewPaths[i] );
+					views[ view ] = StructNew();
+					views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
+				}
 			}
 
 			_setViews( views );
@@ -65,9 +71,9 @@
 
 	<cffunction name="_convertFullViewPathToViewName" access="private" returntype="string" output="false">
 		<cfargument name="fullPath" type="string" required="true" />
+		<cfargument name="viewPath" type="string" required="true" />
 
 		<cfscript>
-			var viewPath = _getViewPath();
 			var viewName = fullPath;
 
 			viewName = Replace( viewName, viewPath, "" );
@@ -104,12 +110,21 @@
 		<cfset _views = views />
 	</cffunction>
 
-	<cffunction name="_getViewPath" access="private" returntype="string" output="false">
-		<cfreturn _viewPath>
+	<cffunction name="_getViewPaths" access="private" returntype="array" output="false">
+		<cfreturn _viewPaths />
 	</cffunction>
-	<cffunction name="_setViewPath" access="private" returntype="void" output="false">
-		<cfargument name="viewPath" type="string" required="true" />
-		<cfset _viewPath = $normalizeUnixAndWindowsPaths( $ensureFullDirectoryPath( viewPath ) ) />
+	<cffunction name="_setViewPaths" access="private" returntype="void" output="false">
+		<cfargument name="viewPaths" type="string" required="true" />
+
+		<cfscript>
+			var i = 0;
+
+			_viewPaths = ListToArray( viewPaths );
+
+			for( i=1; i LTE ArrayLen( _viewPaths ); i++ ){
+				_viewPaths[i] = $normalizeUnixAndWindowsPaths( $ensureFullDirectoryPath( _viewPaths[i] ) );
+			}
+		</cfscript>
 	</cffunction>
 
 	<cffunction name="_getViewRenderer" access="private" returntype="any" output="false">

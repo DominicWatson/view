@@ -17,10 +17,10 @@
 <!--- tests --->
 	<cffunction name="t01_renderView_shouldRenderTheCorrectView" returntype="void">
 		<cfscript>
-			var viewPath       = _getResourcePath() & "/workingViewTest";
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = "<h1>Hello world</h1>";
 			var view           = _getView().init(
-				viewPath = viewPath
+				viewPaths = viewPaths
 			);
 
 			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
@@ -29,11 +29,11 @@
 
 	<cffunction name="t02_renderView_shouldRenderPassedVariables" returntype="void">
 		<cfscript>
-			var viewPath       = _getResourcePath() & "/workingViewTest";
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = "<h1>Testing 123</h1>";
 			var data           = StructNew();
 			var view           = _getView().init(
-				viewPath = viewPath
+				viewPaths = viewPaths
 			);
 
 			data.someVar = "Testing 123";
@@ -44,10 +44,10 @@
 
 	<cffunction name="t03_renderView_shouldThrowError_whenViewDoesNotExist" returntype="void">
 		<cfscript>
-			var viewPath = _getResourcePath() & "/workingViewTest";
-			var failed   = false;
-			var view     = _getView().init(
-				viewPath = viewPath
+			var viewPaths = _getResourcePath() & "/workingViewTest";
+			var failed    = false;
+			var view      = _getView().init(
+				viewPaths = viewPaths
 			);
 
 			try {
@@ -59,6 +59,27 @@
 			}
 
 			super.assert( failed, "View did not throw an appropriate error when the passed view did not exist." );
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="t04_renderView_shouldChooseTheMoreSpecificView_givenAlternatives" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest" & "," & _getResourcePath() & "/workingViewTest2";
+			var expectedOutput = "<h1>Hello universe</h1>";
+			var view           = _getView().init(
+				viewPaths = viewPaths
+			);
+
+
+			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
+
+			viewPaths = _getResourcePath() & "/workingViewTest2" & "," & _getResourcePath() & "/workingViewTest";
+			expectedOutput = "<h1>Hello world</h1>";
+			view = _getView().init(
+				viewPaths = viewPaths
+			);
+
+			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
 		</cfscript>
 	</cffunction>
 
