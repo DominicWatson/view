@@ -130,6 +130,31 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t07_view_shouldNotHaveAccessToRequestScopes" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var data           = StructNew();
+			var failed         = false;
+			var view           = _getView().init(
+				viewPaths = viewPaths
+			);
+
+			request.someVar = "testing";
+
+			try {
+				view.render(
+					  view = "someFolder.aViewAccessingRequestScope"
+					, data = data
+				);
+
+			} catch ( expression e ) {
+				failed = e.message contains "testing";
+			}
+
+			super.assert( failed, "The View framework allowed a view to access the request scope" );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
