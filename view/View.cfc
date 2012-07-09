@@ -32,7 +32,7 @@
 				}
 			}
 
-			return _getViewRenderer().render(
+			return _getViewRenderer().renderView(
 				  __viewPath = view.path
 				, __data     = args
 			);
@@ -126,7 +126,7 @@
 
 	<cffunction name="_initViewRenderer" access="private" returntype="void" output="false">
 		<cfscript>
-			var vr = CreateObject( "component", "util.ViewRenderer" );
+			var vr = CreateObject( "component", "util.ViewRenderer" ).init( framework = this );
 			_setViewRenderer( vr );
 		</cfscript>
 	</cffunction>

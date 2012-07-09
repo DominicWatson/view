@@ -153,6 +153,21 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t08_views_shouldBeAbleToRenderOtherViews" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var expectedOutput = "<h1>Testing 123</h1>";
+			var data           = StructNew();
+			var view           = _getView().init(
+				viewPaths = viewPaths
+			);
+
+			data.someVar = "Testing 123";
+
+			super.assertEquals( expectedOutput, view.render( view="anotherFolder.aViewAccessingAnother", data=data ) );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
