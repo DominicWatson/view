@@ -18,13 +18,15 @@
 	</cffunction>
 
 	<cffunction name="render" access="public" returntype="string" output="false">
-		<cfargument name="view" type="string" required="true"                          />
-		<cfargument name="data" type="struct" required="false" default="#StructNew()#" />
+		<cfargument name="view"   type="string" required="true"                          />
+		<cfargument name="data"   type="struct" required="false" default="#StructNew()#" />
+		<cfargument name="layout" type="string" required="false"                         />
 
 		<cfscript>
-			var view = _getView( view );
-			var args = StructNew();
-			var i    = "";
+			var view     = _getView( view );
+			var args     = StructNew();
+			var i        = "";
+			var rendered = "";
 
 			for( i=1; i LTE ArrayLen( view.args ); i++ ) {
 				if ( StructKeyExists( data, view.args[i] ) ) {
@@ -32,10 +34,18 @@
 				}
 			}
 
-			return _getViewRenderer().renderView(
+			rendered = _getViewRenderer().renderView(
 				  __viewPath = view.path
 				, __data     = args
 			);
+
+			if ( StructKeyExists( arguments, "layout" ) ) {
+				args         = StructNew();
+				args['body'] = rendered;
+				return render( arguments.layout, args );
+			}
+
+			return rendered;
 		</cfscript>
 	</cffunction>
 
