@@ -42,6 +42,17 @@
 				, __data     = args
 			);
 
+			if ( v.layout neq "none" ) {
+				args         = StructNew();
+				args['body'] = rendered;
+
+				rendered = render(
+					  view   = v.layout
+					, data   = args
+					, layout = "none"
+				);
+			}
+
 			if ( layout neq "none" ) {
 				args         = StructNew();
 				args['body'] = rendered;
@@ -78,8 +89,9 @@
 
 					view          = _convertFullViewPathToViewName( filePath, viewPaths[i] );
 					views[ view ] = StructNew();
-					views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
-					views[ view ].args = _parseArgsFromCfParam( filePath );
+					views[ view ].path   = _convertFullPathToRelativePathForCfInclude( filePath );
+					views[ view ].args   = _parseArgsFromCfParam( filePath );
+					views[ view ].layout = _parseLayoutFromFile( filePath );
 				}
 			}
 
@@ -139,6 +151,22 @@
 			}
 
 			return ArrayNew(1);
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="_parseLayoutFromFile" access="private" returntype="string" output="false">
+		<cfargument name="filePath" type="string" required="true" />
+
+		<cfscript>
+			var fileContent = $fileRead( filePath );
+			var regex       = "<\!---\s*?@layout\s+(.*?)\s*?--->";
+			var regexResult = $reSearch( regex, fileContent );
+
+			if ( StructKeyExists( regexResult, "$1" ) and ArrayLen( regexResult.$1 ) ) {
+				return regexResult.$1[1];
+			}
+
+			return "none";
 		</cfscript>
 	</cffunction>
 
