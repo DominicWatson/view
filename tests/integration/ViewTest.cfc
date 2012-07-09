@@ -207,6 +207,21 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t11_view_shouldBeAbleToDeclareTheirOwnLayouts" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var expectedOutput = '<div id="layout"><div id="anotherlayout"><p>I have my own layout</p></div></div>';
+			var view           = _getView().init(
+				  viewPaths     = viewPaths
+				, defaultLayout = "layouts.aLayout"
+			);
+
+			super.assertEquals( expectedOutput, view.render(
+				view = "anotherFolder.viewWithOwnLayout"
+			) );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
