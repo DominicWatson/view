@@ -130,26 +130,24 @@
 		</cfscript>
 	</cffunction>
 
-	<cffunction name="t07_view_shouldNotHaveAccessToRequestScopes" returntype="void">
+	<cffunction name="t07_view_shouldNotHaveAccessToRequestScope" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
-			var data           = StructNew();
+			var viewPaths      = _getResourcePath() & "/badViews/viewWithRequestScope";
 			var failed         = false;
-			var view           = _getView().init(
-				viewPaths = viewPaths
-			);
+			var fullViewPath   = ExpandPath( viewPaths & "/someFolder/aViewAccessingRequestScope.cfm" );
+			var view           = "";
 
 			request.someVar = "testing";
 
 			try {
-				view.render(
-					  view = "someFolder.aViewAccessingRequestScope"
-					, data = data
+				_getView().init(
+					viewPaths = viewPaths
 				);
-
-			} catch ( expression e ) {
-				failed = e.message contains "testing";
+			} catch ( "view.scope.notAllowed" e ) {
+				failed = e.message contains fullViewPath;
 			}
+
+			StructDelete( request, "someVar" );
 
 			super.assert( failed, "The View framework allowed a view to access the request scope" );
 		</cfscript>

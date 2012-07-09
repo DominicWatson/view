@@ -1,5 +1,8 @@
 <cfcomponent output="false">
 
+	<cfscript>
+		variables.request     = StructNew();
+	</cfscript>
 	<!---
 		The code in this component is geared to revealing as little as possible to the view.
 		The view should only see:

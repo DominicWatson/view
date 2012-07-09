@@ -55,6 +55,9 @@
 
 				for( n=1; n LTE files.recordCount; n++ ){
 					filePath      = $listAppend( files.directory[n], files.name[n], '/' );
+
+					_checkViewConformsToStrictRules( filePath );
+
 					view          = _convertFullViewPathToViewName( filePath, viewPaths[i] );
 					views[ view ] = StructNew();
 					views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
@@ -125,6 +128,24 @@
 		<cfscript>
 			var vr = CreateObject( "component", "util.ViewRenderer" );
 			_setViewRenderer( vr );
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="_checkViewConformsToStrictRules" access="private" returntype="void" output="false">
+		<cfargument name="filePath" type="string" required="true" />
+
+		<cfscript>
+			var fileContent = $fileRead( filePath );
+			// TODO: do this properly, full regex and line parsing
+			var hasRequestScopeReferences = ReFindNoCase( "request[\[\.]", fileContent );
+
+			if ( hasRequestScopeReferences ) {
+				$throw(
+					  type = "view.scope.notAllowed"
+					, message = "A view attempted to use the request scope, this is not allowed in the View framework. The offending view was #filePath#."
+				);
+			}
+
 		</cfscript>
 	</cffunction>
 
