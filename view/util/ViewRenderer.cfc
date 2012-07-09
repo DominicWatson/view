@@ -1,15 +1,10 @@
 <cfcomponent output="false">
-	<!---
-		The code in this component is geared to revealing as little as possible to the view.
-		The view should only see:
-
-			* a "loc" struct   (for local variables)
-			* an "args" struct (a short alias to the arguments scope where data must be deliberately passed to the view)
-	--->
+<!--- properties --->
 	<cfscript>
 		variables.request     = StructNew();
 	</cfscript>
 
+<!--- constructor --->
 	<cffunction name="init" access="public" returntype="any" output="false">
 		<cfargument name="framework" type="any" required="true" />
 
@@ -22,6 +17,7 @@
 		</cfscript>
 	</cffunction>
 
+<!--- public methods --->
 	<cffunction name="renderView" access="public" returntype="string" output="false">
 		<cfargument name="__viewPath" type="string" required="true" />
 		<cfargument name="__data"     type="struct" required="true" />
@@ -44,6 +40,7 @@
 		<cfreturn Trim( loc.result ) />
 	</cffunction>
 
+<!--- private methods --->
 	<cffunction name="render" access="private" returntype="string" output="false">
 		<cfargument name="view"   type="string" required="true"                          />
 		<cfargument name="data"   type="struct" required="false" default="#StructNew()#" />
@@ -51,7 +48,6 @@
 
 		<cfreturn _getFramework().render( argumentCollection = arguments ) />
 	</cffunction>
-
 
 <!--- accessors --->
 	<cffunction name="_getFramework" access="private" returntype="any" output="false">
