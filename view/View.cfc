@@ -6,10 +6,13 @@
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="viewPaths" type="string" required="true" />
+		<cfargument name="viewPaths"     type="string" required="true"                 />
+		<cfargument name="defaultLayout" type="string" required="false" default="none" />
 
 		<cfscript>
 			_setViewPaths( viewPaths );
+			_setDefaultLayout( defaultLayout );
+
 			_initViewRenderer();
 			_loadViews();
 
@@ -18,31 +21,36 @@
 	</cffunction>
 
 	<cffunction name="render" access="public" returntype="string" output="false">
-		<cfargument name="view"   type="string" required="true"                          />
-		<cfargument name="data"   type="struct" required="false" default="#StructNew()#" />
-		<cfargument name="layout" type="string" required="false"                         />
+		<cfargument name="view"   type="string" required="true"                                  />
+		<cfargument name="data"   type="struct" required="false" default="#StructNew()#"         />
+		<cfargument name="layout" type="string" required="false" default="#_getDefaultLayout()#" />
 
 		<cfscript>
-			var view     = _getView( view );
+			var v        = _getView( view );
 			var args     = StructNew();
 			var i        = "";
 			var rendered = "";
 
-			for( i=1; i LTE ArrayLen( view.args ); i++ ) {
-				if ( StructKeyExists( data, view.args[i] ) ) {
-					args[ view.args[i] ] = data[ view.args[i] ];
+			for( i=1; i LTE ArrayLen( v.args ); i++ ) {
+				if ( StructKeyExists( data, v.args[i] ) ) {
+					args[ v.args[i] ] = data[ v.args[i] ];
 				}
 			}
 
 			rendered = _getViewRenderer().renderView(
-				  __viewPath = view.path
+				  __viewPath = v.path
 				, __data     = args
 			);
 
-			if ( StructKeyExists( arguments, "layout" ) ) {
+			if ( layout neq "none" ) {
 				args         = StructNew();
 				args['body'] = rendered;
-				return render( arguments.layout, args );
+
+				return render(
+					  view   = layout
+					, data   = args
+					, layout = "none"
+				);
 			}
 
 			return rendered;
@@ -191,5 +199,13 @@
 	<cffunction name="_setViewRenderer" access="private" returntype="void" output="false">
 		<cfargument name="viewRenderer" type="any" required="true" />
 		<cfset _viewRenderer = arguments.viewRenderer />
+	</cffunction>
+
+	<cffunction name="_getDefaultLayout" access="private" returntype="string" output="false">
+		<cfreturn _defaultLayout>
+	</cffunction>
+	<cffunction name="_setDefaultLayout" access="private" returntype="void" output="false">
+		<cfargument name="defaultLayout" type="string" required="true" />
+		<cfset _defaultLayout = arguments.defaultLayout />
 	</cffunction>
 </cfcomponent>

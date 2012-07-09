@@ -188,6 +188,25 @@
 
 	</cffunction>
 
+	<cffunction name="t10_renderView_shouldUseDefaultLayout_whenNoLayoutPassed" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var expectedOutput = '<div id="layout"><h1>Testing 123</h1></div>';
+			var data           = StructNew();
+			var view           = _getView().init(
+				  viewPaths     = viewPaths
+				, defaultLayout = "layouts.aLayout"
+			);
+
+			data.someVar = "Testing 123";
+
+			super.assertEquals( expectedOutput, view.render(
+				  view   = "anotherFolder.aViewAccessingAnother"
+				, data   = data
+			) );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
