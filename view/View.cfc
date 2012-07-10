@@ -71,27 +71,29 @@
 <!--- private --->
 	<cffunction name="_loadViews" access="private" returntype="void" output="false">
 		<cfscript>
-			var viewPaths = _getViewPaths();
-			var files    = "";
-			var filePath = "";
-			var views    = StructNew();
-			var view     = "";
-			var i        = "";
-			var n        = "";
+			var viewPaths   = _getViewPaths();
+			var files       = "";
+			var filePath    = "";
+			var fileContent = "";
+			var views       = StructNew();
+			var view        = "";
+			var i           = "";
+			var n           = "";
 
 			for( i=1; i LTE ArrayLen( viewPaths ); i++ ){
 				files = $directoryList( viewPaths[i], "*.cfm" )
 
 				for( n=1; n LTE files.recordCount; n++ ){
-					filePath      = $listAppend( files.directory[n], files.name[n], '/' );
+					filePath = $normalizeUnixAndWindowsPaths( $listAppend( files.directory[n], files.name[n], '/' ) );
+					fileContent = $fileRead( filePath );
 
-					_checkViewConformsToStrictRules( filePath );
+					_checkViewConformsToStrictRules( filePath, fileContent );
 
 					view          = _convertFullViewPathToViewName( filePath, viewPaths[i] );
 					views[ view ] = StructNew();
 					views[ view ].path   = _convertFullPathToRelativePathForCfInclude( filePath );
-					views[ view ].args   = _parseArgsFromCfParam( filePath );
-					views[ view ].layout = _parseLayoutFromFile( filePath );
+					views[ view ].args   = _parseArgsFromCfParam( fileContent );
+					views[ view ].layout = _parseLayoutFromFile( fileContent );
 				}
 			}
 
@@ -139,10 +141,9 @@
 	</cffunction>
 
 	<cffunction name="_parseArgsFromCfParam" access="private" returntype="array" output="false">
-		<cfargument name="filePath" type="string" required="true" />
+		<cfargument name="fileContent" type="string" required="true" />
 
 		<cfscript>
-			var fileContent = $fileRead( filePath );
 			var regex       = '<cfparam name="args\.(.*?)"';
 			var regexResult = $research( regex, fileContent );
 
@@ -155,10 +156,9 @@
 	</cffunction>
 
 	<cffunction name="_parseLayoutFromFile" access="private" returntype="string" output="false">
-		<cfargument name="filePath" type="string" required="true" />
+		<cfargument name="fileContent" type="string" required="true" />
 
 		<cfscript>
-			var fileContent = $fileRead( filePath );
 			var regex       = "<\!---\s*?@layout\s+(.*?)\s*?--->";
 			var regexResult = $reSearch( regex, fileContent );
 
@@ -178,7 +178,8 @@
 	</cffunction>
 
 	<cffunction name="_checkViewConformsToStrictRules" access="private" returntype="void" output="false">
-		<cfargument name="filePath" type="string" required="true" />
+		<cfargument name="filePath"    type="string" required="true" />
+		<cfargument name="fileContent" type="string" required="true" />
 
 		<cfscript>
 			var fileContent = $fileRead( filePath );
