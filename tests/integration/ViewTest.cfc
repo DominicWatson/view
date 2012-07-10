@@ -130,30 +130,7 @@
 		</cfscript>
 	</cffunction>
 
-	<cffunction name="t07_view_shouldNotHaveAccessToRequestScope" returntype="void">
-		<cfscript>
-			var viewPaths      = _getResourcePath() & "/badViews/viewWithRequestScope";
-			var failed         = false;
-			var fullViewPath   = ExpandPath( viewPaths & "/someFolder/aViewAccessingRequestScope.cfm" );
-			var view           = "";
-
-			request.someVar = "testing";
-
-			try {
-				_getView().init(
-					viewPaths = viewPaths
-				);
-			} catch ( "view.scope.notAllowed" e ) {
-				failed = e.message contains fullViewPath;
-			}
-
-			StructDelete( request, "someVar" );
-
-			super.assert( failed, "The View framework allowed a view to access the request scope" );
-		</cfscript>
-	</cffunction>
-
-	<cffunction name="t08_views_shouldBeAbleToRenderOtherViews" returntype="void">
+	<cffunction name="t07_views_shouldBeAbleToRenderOtherViews" returntype="void">
 		<cfscript>
 			var viewPaths      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = "<h1>Testing 123</h1>";
@@ -168,7 +145,7 @@
 		</cfscript>
 	</cffunction>
 
-	<cffunction name="t09_renderView_shouldRenderViewInsidePassedLayout" returntype="void">
+	<cffunction name="t08_renderView_shouldRenderViewInsidePassedLayout" returntype="void">
 		<cfscript>
 			var viewPaths      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = '<div id="layout"><h1>Testing 123</h1></div>';
@@ -188,7 +165,7 @@
 
 	</cffunction>
 
-	<cffunction name="t10_renderView_shouldUseDefaultLayout_whenNoLayoutPassed" returntype="void">
+	<cffunction name="t09_renderView_shouldUseDefaultLayout_whenNoLayoutPassed" returntype="void">
 		<cfscript>
 			var viewPaths      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = '<div id="layout"><h1>Testing 123</h1></div>';
@@ -207,7 +184,7 @@
 		</cfscript>
 	</cffunction>
 
-	<cffunction name="t11_view_shouldBeAbleToDeclareTheirOwnLayouts" returntype="void">
+	<cffunction name="t10_view_shouldBeAbleToDeclareTheirOwnLayouts" returntype="void">
 		<cfscript>
 			var viewPaths      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = '<div id="layout"><div id="anotherlayout"><p>I have my own layout</p></div></div>';
