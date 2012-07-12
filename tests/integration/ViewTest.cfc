@@ -199,6 +199,25 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t11_templates_shouldHavePotentialAccessToDataPassedToOriginalView" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var expectedOutput = '<div id="layout"><div id="anotherlayout"><h1>Testing 123</h1><p>I have my own layout</p></div></div>';
+			var data           = StructNew();
+			var view           = _getView().init(
+				  viewPaths     = viewPaths
+				, defaultLayout = "layouts.aLayout"
+			);
+
+			data.pageTitle = "Testing 123";
+
+			super.assertEquals( expectedOutput, view.render(
+				  view = "anotherFolder.anotherViewWithOwnLayout"
+				, data = data
+			) );
+
+		</cfscript>
+	</cffunction>
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
