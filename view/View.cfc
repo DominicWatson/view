@@ -43,7 +43,7 @@
 			);
 
 			if ( v.layout neq "none" ) {
-				args         = StructNew();
+				args         = arguments.data
 				args['body'] = rendered;
 
 				rendered = render(
@@ -54,7 +54,7 @@
 			}
 
 			if ( layout neq "none" ) {
-				args         = StructNew();
+				args         = arguments.data
 				args['body'] = rendered;
 
 				return render(
