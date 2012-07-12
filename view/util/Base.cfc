@@ -108,7 +108,11 @@
 					if(not StructKeyExists(final, '$#i-1#')){
 						final['$#i-1#'] = ArrayNew(1);
 					}
-					ArrayAppend(final['$#i-1#'], Mid(arguments.text, result.pos[i], result.len[i]));
+					if ( result.pos[i] ) {
+						ArrayAppend(final['$#i-1#'], Mid(arguments.text, result.pos[i], result.len[i]));
+					} else {
+						ArrayAppend(final['$#i-1#'], "");
+					}
 				}
 				pos = result.pos[2] + 1;
 				result	= ReFindNoCase( arguments.regex, arguments.text, pos, true );

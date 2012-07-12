@@ -26,19 +26,11 @@
 		<cfargument name="layout" type="string" required="false" default="#_getDefaultLayout()#" />
 
 		<cfscript>
-			var v        = _getView( view );
-			var args     = StructNew();
-			var i        = "";
-
-			for( i=1; i LTE ArrayLen( v.args ); i++ ) {
-				if ( StructKeyExists( data, v.args[i] ) ) {
-					args[ v.args[i] ] = data[ v.args[i] ];
-				}
-			}
+			var v = _getView( view );
 
 			return _getViewRenderer().renderView(
-				  __viewPath = v.path
-				, __data     = args
+				  __viewPath = v.pathForCfInclude
+				, __data     = _prepareViewArguments( v, data )
 			);
 		</cfscript>
 	</cffunction>
@@ -62,10 +54,11 @@
 					filePath    = $normalizeUnixAndWindowsPaths( $listAppend( files.directory[n], files.name[n], '/' ) );
 					fileContent = $fileRead( filePath );
 
-					view               = _convertFullViewPathToViewName( filePath, viewPaths[i] );
-					views[ view ]      = StructNew();
-					views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
-					views[ view ].args = _parseArgsFromCfParam( fileContent );
+					view                           = _convertFullViewPathToViewName( filePath, viewPaths[i] );
+					views[ view ]                  = StructNew();
+					views[ view ].path             = filePath;
+					views[ view ].args             = _parseArgsFromCfParam( fileContent );
+					views[ view ].pathForCfInclude = _convertFullPathToRelativePathForCfInclude( filePath );
 				}
 			}
 
@@ -116,14 +109,47 @@
 		<cfargument name="fileContent" type="string" required="true" />
 
 		<cfscript>
-			var regex       = '<cfparam name="args\.(.*?)"';
+			var regex       = '<cfparam\s+name="args\.(.*?)"(.*?)>';
 			var regexResult = $research( regex, fileContent );
+			var i           = 0;
+			var args        = ArrayNew();
+			var arg         = "";
 
 			if ( StructKeyExists( regexResult, "$1" ) ) {
-				return regexResult.$1;
+				for ( i=1; i LTE ArrayLen( regexResult.$1 ); i++ ){
+					arg = StructNew();
+					arg.name = regexResult.$1[i];
+					arg.required = not ReFindNoCase( 'default=".*?"', regexResult.$2[i] );
+					ArrayAppend( args, arg );
+				}
 			}
 
-			return ArrayNew(1);
+			return args;
+		</cfscript>
+	</cffunction>
+
+	<cffunction name="_prepareViewArguments" access="private" returntype="struct" output="false">
+		<cfargument name="view" type="struct" required="true" />
+		<cfargument name="data" type="struct" required="true" />
+
+		<cfscript>
+			var args = StructNew();
+			var i    = 0;
+
+			for( i=1; i LTE ArrayLen( view.args ); i++ ) {
+				if ( StructKeyExists( data, view.args[i].name ) ) {
+					args[ view.args[i].name ] = data[ view.args[i].name ];
+
+				} else if ( view.args[i].required ) {
+					$throw(
+						  type    = "view.missing.argument"
+						, message = "The argument '#view.args[i].name#' is required by #ListLast(view.path, '/')# but was not passed to the render() method."
+						, detail  = view.path
+					);
+				}
+			}
+
+			return args;
 		</cfscript>
 	</cffunction>
 

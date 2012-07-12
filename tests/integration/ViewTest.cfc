@@ -145,6 +145,26 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t08_view_shouldThrowError_whenParamRequiredByAViewWithNoDefault_isNotPassedToTheView" returntype="void">
+		<cfscript>
+			var expectedErrorMessage = "The argument 'someVar' is required by aView.cfm but was not passed to the render() method.";
+			var viewPaths            = _getResourcePath() & "/workingViewTest";
+			var failed               = false;
+			var view                 = _getView().init(
+				viewPaths = viewPaths
+			);
+
+			try {
+				view.render( "someFolder.aView" );
+			} catch ( "view.missing.argument" e ) {
+				failed = true;
+				super.assertEquals( expectedErrorMessage, e.message );
+			}
+
+			super.assert( failed, "View did not throw its own error when a required view parameter was not passed." );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
