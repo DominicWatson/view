@@ -29,7 +29,6 @@
 			var v        = _getView( view );
 			var args     = StructNew();
 			var i        = "";
-			var rendered = "";
 
 			for( i=1; i LTE ArrayLen( v.args ); i++ ) {
 				if ( StructKeyExists( data, v.args[i] ) ) {
@@ -37,34 +36,10 @@
 				}
 			}
 
-			rendered = _getViewRenderer().renderView(
+			return _getViewRenderer().renderView(
 				  __viewPath = v.path
 				, __data     = args
 			);
-
-			if ( v.layout neq "none" ) {
-				args         = arguments.data
-				args['body'] = rendered;
-
-				rendered = render(
-					  view   = v.layout
-					, data   = args
-					, layout = "none"
-				);
-			}
-
-			if ( layout neq "none" ) {
-				args         = arguments.data
-				args['body'] = rendered;
-
-				return render(
-					  view   = layout
-					, data   = args
-					, layout = "none"
-				);
-			}
-
-			return rendered;
 		</cfscript>
 	</cffunction>
 
@@ -84,14 +59,13 @@
 				files = $directoryList( viewPaths[i], "*.cfm" )
 
 				for( n=1; n LTE files.recordCount; n++ ){
-					filePath = $normalizeUnixAndWindowsPaths( $listAppend( files.directory[n], files.name[n], '/' ) );
+					filePath    = $normalizeUnixAndWindowsPaths( $listAppend( files.directory[n], files.name[n], '/' ) );
 					fileContent = $fileRead( filePath );
 
-					view          = _convertFullViewPathToViewName( filePath, viewPaths[i] );
-					views[ view ] = StructNew();
-					views[ view ].path   = _convertFullPathToRelativePathForCfInclude( filePath );
-					views[ view ].args   = _parseArgsFromCfParam( fileContent );
-					views[ view ].layout = _parseLayoutFromFile( fileContent );
+					view               = _convertFullViewPathToViewName( filePath, viewPaths[i] );
+					views[ view ]      = StructNew();
+					views[ view ].path = _convertFullPathToRelativePathForCfInclude( filePath );
+					views[ view ].args = _parseArgsFromCfParam( fileContent );
 				}
 			}
 
@@ -150,21 +124,6 @@
 			}
 
 			return ArrayNew(1);
-		</cfscript>
-	</cffunction>
-
-	<cffunction name="_parseLayoutFromFile" access="private" returntype="string" output="false">
-		<cfargument name="fileContent" type="string" required="true" />
-
-		<cfscript>
-			var regex       = "<\!---\s*?@layout\s+(.*?)\s*?--->";
-			var regexResult = $reSearch( regex, fileContent );
-
-			if ( StructKeyExists( regexResult, "$1" ) and ArrayLen( regexResult.$1 ) ) {
-				return regexResult.$1[1];
-			}
-
-			return "none";
 		</cfscript>
 	</cffunction>
 

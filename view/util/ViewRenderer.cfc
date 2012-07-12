@@ -44,7 +44,6 @@
 	<cffunction name="render" access="private" returntype="string" output="false">
 		<cfargument name="view"   type="string" required="true"                          />
 		<cfargument name="data"   type="struct" required="false" default="#StructNew()#" />
-		<cfargument name="layout" type="string" required="false" default="none"          />
 
 		<cfreturn _getFramework().render( argumentCollection = arguments ) />
 	</cffunction>
