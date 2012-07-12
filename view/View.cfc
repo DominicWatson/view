@@ -6,7 +6,7 @@
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="viewPaths"     type="string" required="true" />
+		<cfargument name="viewPaths" type="string" required="true" />
 
 		<cfscript>
 			_setViewPaths( viewPaths );
@@ -19,8 +19,8 @@
 	</cffunction>
 
 	<cffunction name="render" access="public" returntype="string" output="false">
-		<cfargument name="view"   type="string" required="true"                          />
-		<cfargument name="data"   type="struct" required="false" default="#StructNew()#" />
+		<cfargument name="view" type="string" required="true"                          />
+		<cfargument name="data" type="struct" required="false" default="#StructNew()#" />
 
 		<cfscript>
 			var v = _getView( view );
