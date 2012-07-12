@@ -34,7 +34,7 @@
 		</cfsavecontent>
 
 		<cfif loc.__state NEQ serializeJson( variables )>
-			<cfthrow type="view.scope.altered" message="Scope altered in view, '#Replace( ExpandPath( __viewPath ), '\', '/', 'all' )#'. To use variables local to your view, use the 'loc' scope." />
+			<cfthrow type="view.scope.altered" message="Scope altered in view, '#ListLast( __viewPath, '/' )#'. To use variables local to your view, use the 'loc' scope." />
 		</cfif>
 
 		<cfreturn Trim( loc.result ) />

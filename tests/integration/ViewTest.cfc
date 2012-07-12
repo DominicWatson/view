@@ -97,7 +97,7 @@
 
 			} catch ( "view.scope.altered" e ) {
 				failed = true;
-				super.assertEquals( "Scope altered in view, '#viewPath#'. To use variables local to your view, use the 'loc' scope.", e.message );
+				super.assertEquals( "Scope altered in view, 'alteringVariablesScope.cfm'. To use variables local to your view, use the 'loc' scope.", e.message );
 			}
 
 			super.assert( failed, "View did not throw an appropriate error when the passed view altered variables scope." );
