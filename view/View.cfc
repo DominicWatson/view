@@ -6,12 +6,10 @@
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="viewPaths"     type="string" required="true"                 />
-		<cfargument name="defaultLayout" type="string" required="false" default="none" />
+		<cfargument name="viewPaths"     type="string" required="true" />
 
 		<cfscript>
 			_setViewPaths( viewPaths );
-			_setDefaultLayout( defaultLayout );
 
 			_initViewRenderer();
 			_loadViews();
@@ -21,9 +19,8 @@
 	</cffunction>
 
 	<cffunction name="render" access="public" returntype="string" output="false">
-		<cfargument name="view"   type="string" required="true"                                  />
-		<cfargument name="data"   type="struct" required="false" default="#StructNew()#"         />
-		<cfargument name="layout" type="string" required="false" default="#_getDefaultLayout()#" />
+		<cfargument name="view"   type="string" required="true"                          />
+		<cfargument name="data"   type="struct" required="false" default="#StructNew()#" />
 
 		<cfscript>
 			var v = _getView( view );
@@ -192,13 +189,5 @@
 	<cffunction name="_setViewRenderer" access="private" returntype="void" output="false">
 		<cfargument name="viewRenderer" type="any" required="true" />
 		<cfset _viewRenderer = arguments.viewRenderer />
-	</cffunction>
-
-	<cffunction name="_getDefaultLayout" access="private" returntype="string" output="false">
-		<cfreturn _defaultLayout>
-	</cffunction>
-	<cffunction name="_setDefaultLayout" access="private" returntype="void" output="false">
-		<cfargument name="defaultLayout" type="string" required="true" />
-		<cfset _defaultLayout = arguments.defaultLayout />
 	</cffunction>
 </cfcomponent>
