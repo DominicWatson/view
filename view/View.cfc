@@ -3,13 +3,16 @@
 	<cfscript>
 		_views     = StructNew();
 		_viewPaths = ArrayNew(1);
+		_devMode   = false;
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="viewPaths" type="string" required="true" />
+		<cfargument name="viewPaths" type="string"  required="true"                  />
+		<cfargument name="devMode"   type="boolean" required="false" default="false" />
 
 		<cfscript>
 			_setViewPaths( viewPaths );
+			_setDevMode( devMode );
 
 			_initViewRenderer();
 			_loadViews();
@@ -159,6 +162,14 @@
 
 <!--- accessors --->
 	<cffunction name="_getViews" access="private" returntype="struct" output="false">
+		<cfscript>
+			if ( _getDevMode() and not StructKeyExists( request, "_viewFWCheckedForChanges" ) ) {
+				request._viewFWCheckedForChanges = true;
+				_loadViews();
+			}
+
+			return _views;
+		</cfscript>
 		<cfreturn _views>
 	</cffunction>
 	<cffunction name="_setViews" access="private" returntype="void" output="false">
@@ -189,5 +200,13 @@
 	<cffunction name="_setViewRenderer" access="private" returntype="void" output="false">
 		<cfargument name="viewRenderer" type="any" required="true" />
 		<cfset _viewRenderer = arguments.viewRenderer />
+	</cffunction>
+
+	<cffunction name="_getDevMode" access="private" returntype="boolean" output="false">
+		<cfreturn _devMode>
+	</cffunction>
+	<cffunction name="_setDevMode" access="private" returntype="void" output="false">
+		<cfargument name="devMode" type="boolean" required="true" />
+		<cfset _devMode = arguments.devMode />
 	</cffunction>
 </cfcomponent>

@@ -165,6 +165,29 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t09_view_shouldAssimilateNewViewsAutomagically_whenInDevMode" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var newFile        = viewPaths & "/new.cfm";
+			var expectedOutput = "<h1>Testing 123</h1>";
+			var data           = StructNew();
+			var view           = "";
+
+			_fileDelete( newFile );
+
+			view = _getView().init(
+				  viewPaths = viewPaths
+				, devMode   = true
+			);
+
+			_fileWrite( newFile, expectedOutput );
+
+			super.assertEquals( expectedOutput, view.render( "new" ) );
+
+			_fileDelete( newFile );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
@@ -172,5 +195,20 @@
 
 	<cffunction name="_getResourcePath" access="private" returntype="string" output="false">
 		<cfreturn '/tests/integration/resources' />
+	</cffunction>
+
+	<cffunction name="_fileDelete" access="private" returntype="void" output="false">
+		<cfargument name="file" type="string" required="true" />
+
+		<cfif FileExists( file )>
+			<cffile action="delete" file="#file#" />
+		</cfif>
+	</cffunction>
+
+	<cffunction name="_fileWrite" access="private" returntype="void" output="false">
+		<cfargument name="file" type="string" required="true" />
+		<cfargument name="content" type="string" required="true" />
+
+		<cffile action="write" file="#file#" output="#content#" />
 	</cffunction>
 </cfcomponent>
