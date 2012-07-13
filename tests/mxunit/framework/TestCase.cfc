@@ -164,6 +164,7 @@
 		<cfargument name="testMethod" type="string" required="no" default="" hint="A single test to run. If not specified, all tests are run." />
 		<cfargument name="debug" type="boolean" required="false" default="false" hint="Flag to indicate whether or not to dump the test results to the screen.">
 		<cfargument name="output" type="string" required="false" default="jqGrid" hint="Output format: html,xml,junitxml,jqGrid "><!--- html,xml,junitxml,jqGrid --->
+		<cfargument name="mxunit_root" type="string" required="false" default="" hint="e.g. '/tests/mxunit'">
 
 		<cfscript>
 			TestCase(this); //don't remove this. its breaks things (no I don't know why)
@@ -196,7 +197,7 @@
 				break;
 
 			default:
-					writeoutput(this.result.getHtmlresults());
+					writeoutput(this.result.getHtmlresults( arguments.mxunit_root ));
 				break;
 			}
 		</cfscript>

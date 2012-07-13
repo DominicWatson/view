@@ -5,4 +5,6 @@
 	, recurse	    = true
 ) />
 
-<cfcontent reset="true" /><cfoutput>#testResults.getHtmlResults()#</cfoutput>
+<cfcontent reset="true" /><cfoutput>#testResults.getHtmlResults(
+	mxunit_root = GetDirectoryFromPath( cgi.script_name ) & "mxunit"
+)#</cfoutput>
