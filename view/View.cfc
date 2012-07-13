@@ -8,13 +8,14 @@
 
 	<cffunction name="init" access="public" returntype="any" output="false">
 		<cfargument name="viewPaths" type="string"  required="true"                  />
+		<cfargument name="udfPaths"  type="string"  required="false" default=""      />
 		<cfargument name="devMode"   type="boolean" required="false" default="false" />
 
 		<cfscript>
 			_setViewPaths( viewPaths );
 			_setDevMode( devMode );
 
-			_initViewRenderer();
+			_initViewRenderer( udfPaths );
 			_loadViews();
 
 			return this;
@@ -154,8 +155,12 @@
 	</cffunction>
 
 	<cffunction name="_initViewRenderer" access="private" returntype="void" output="false">
+		<cfargument name="udfPaths"  type="string"  required="true" />
+
 		<cfscript>
-			var vr = CreateObject( "component", "util.ViewRenderer" ).init( framework = this );
+			var udfs = CreateObject( "component", "util.UdfWrapper" ).init( udfPaths = udfPaths )
+			var vr   = CreateObject( "component", "util.ViewRenderer" ).init( framework = this, udfs = udfs );
+
 			_setViewRenderer( vr );
 		</cfscript>
 	</cffunction>

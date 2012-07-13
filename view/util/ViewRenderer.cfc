@@ -1,15 +1,17 @@
 <cfcomponent output="false">
 <!--- properties --->
 	<cfscript>
-		variables.request     = StructNew();
+		variables.udf = StructNew();
 	</cfscript>
 
 <!--- constructor --->
 	<cffunction name="init" access="public" returntype="any" output="false">
 		<cfargument name="framework" type="any" required="true" />
+		<cfargument name="udfs"      type="any" required="true" />
 
 		<cfscript>
 			_setFramework( framework );
+			_setUdfs( udfs );
 
 			StructDelete( this, "init" );
 
@@ -57,4 +59,11 @@
 		<cfset _framework = arguments.framework />
 	</cffunction>
 
+	<cffunction name="_getUdfs" access="private" returntype="any" output="false">
+		<cfreturn udf />
+	</cffunction>
+	<cffunction name="_setUdfs" access="private" returntype="void" output="false">
+		<cfargument name="udfs" type="any" required="true" />
+		<cfset udf = arguments.udfs />
+	</cffunction>
 </cfcomponent>

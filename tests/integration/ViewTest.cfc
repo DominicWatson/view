@@ -188,6 +188,20 @@
 		</cfscript>
 	</cffunction>
 
+	<cffunction name="t10_views_shouldHaveAccessToSuppliedUdfLibraries" returntype="void">
+		<cfscript>
+			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var udfPaths       = _getResourcePath() & "/udfs1," & _getResourcePath() & "/udfs2";
+			var expectedOutput = "<h1>Hello world</h1><p>Today's date</p>";
+			var view           = _getView().init(
+				  viewPaths = viewPaths
+				, udfPaths  = udfPaths
+			);
+
+			super.assertEquals( expectedOutput, view.render( "udfTest" ) );
+		</cfscript>
+	</cffunction>
+
 <!--- private utility --->
 	<cffunction name="_getView" access="private" returntype="any" output="false">
 		<cfreturn createObject('component', 'view.View') />
