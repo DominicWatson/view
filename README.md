@@ -69,4 +69,6 @@ The *View* framework limits your views exposure to variables. It provides the vi
 2. *loc*. This is an empty struct that the view can use for any variables that it needs within itself (local).
 3. *udf*. This struct will be populated with functions found in `.cfm` files within your udf directories. The udf directories are set when you instantiate the framework
 
+Finally, the framework allows your views access to the `render()` method. This allows views to render other views and is only possible when the parent view has the necessary data for rendering the child.
+
 That's pretty much it!
