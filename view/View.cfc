@@ -6,10 +6,10 @@
 		_devMode   = false;
 	</cfscript>
 
-	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="viewPaths" type="string"  required="true"                  />
-		<cfargument name="udfPaths"  type="string"  required="false" default=""      />
-		<cfargument name="devMode"   type="boolean" required="false" default="false" />
+	<cffunction name="init" access="public" returntype="any" output="false" hint="Constructor. This method should be called with to instantiate the View framework. Ideally, the result of this call should be cached in some permanent scope such as the Application scope. Instantiating per request will be costly.">
+		<cfargument name="viewPaths" type="string"  required="true"                  hint="Comma separated list of directories that contain views. When their local paths are the same, views in directories that come later in the list will override those from directories earlier in the list." />
+		<cfargument name="udfPaths"  type="string"  required="false" default=""      hint="Comma separated list of directories that contain cfm files with user defined functions. These functions will be available to all views." />
+		<cfargument name="devMode"   type="boolean" required="false" default="false" hint="Whether or not to run in Dev mode (default false). In dev mode, the View framework will automatically reload changes you make to your source files." />
 
 		<cfscript>
 			_setViewPaths( viewPaths );
@@ -22,9 +22,9 @@
 		</cfscript>
 	</cffunction>
 
-	<cffunction name="render" access="public" returntype="string" output="false">
-		<cfargument name="view" type="string" required="true"                          />
-		<cfargument name="data" type="struct" required="false" default="#StructNew()#" />
+	<cffunction name="render" access="public" returntype="string" output="false" hint="The render method returns a rendered view (string).">
+		<cfargument name="view" type="string" required="true"                          hint="Dot separated path to a view, without the .cfm extension. e.g. if you have the file /views/layouts/etc/someView.cfm, it would be referenced as 'layouts.etc.someView'." />
+		<cfargument name="data" type="struct" required="false" default="#StructNew()#" hint="Structure of data that should be made available to the view. Only variables that have been 'cfparamd' in the view will be passed on to the view." />
 
 		<cfscript>
 			var v = _getView( view );
