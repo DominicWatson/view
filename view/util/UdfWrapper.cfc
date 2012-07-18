@@ -1,10 +1,10 @@
 <cfcomponent output="false" extends="Base">
 
 	<cffunction name="init" access="public" returntype="any" output="false">
-		<cfargument name="udfPaths" type="string" required="true" />
+		<cfargument name="udfDirs" type="string" required="true" />
 
 		<cfscript>
-			_loadUdfs( udfPaths );
+			_loadUdfs( udfDirs );
 
 			StructDelete( this, "init" );
 
@@ -13,7 +13,7 @@
 	</cffunction>
 
 	<cffunction name="_loadUdfs" access="private" returntype="void" output="false">
-		<cfargument name="udfPaths" type="string" required="true" />
+		<cfargument name="udfDirs" type="string" required="true" />
 
 		<cfscript>
 			var i = 0;
@@ -22,8 +22,8 @@
 			var udfFiles = "";
 			var udfFile = "";
 
-			for( i=1; i LTE ListLen( udfPaths ); i++ ){
-				udfPath = ListGetAt( udfPaths, i );
+			for( i=1; i LTE ListLen( udfDirs ); i++ ){
+				udfPath = ListGetAt( udfDirs, i );
 				udfFiles = $directoryList( udfPath, "*.cfm" );
 				for( n=1; n LTE udfFiles.recordCount; n++ ){
 					udfFile = $normalizeUnixAndWindowsPaths( $listAppend( udfFiles.directory[n], udfFiles.name[n], "/" ) );

@@ -17,10 +17,10 @@
 <!--- tests --->
 	<cffunction name="t01_renderView_shouldRenderTheCorrectView" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var viewDirs      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = "<h1>Hello world</h1>";
 			var view           = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
@@ -29,11 +29,11 @@
 
 	<cffunction name="t02_renderView_shouldRenderPassedVariables" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var viewDirs      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = "<h1>Testing 123</h1>";
 			var data           = StructNew();
 			var view           = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			data.someVar = "Testing 123";
@@ -44,10 +44,10 @@
 
 	<cffunction name="t03_renderView_shouldThrowError_whenViewDoesNotExist" returntype="void">
 		<cfscript>
-			var viewPaths = _getResourcePath() & "/workingViewTest";
+			var viewDirs = _getResourcePath() & "/workingViewTest";
 			var failed    = false;
 			var view      = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			try {
@@ -64,19 +64,19 @@
 
 	<cffunction name="t04_renderView_shouldChooseTheMoreSpecificView_givenAlternatives" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest" & "," & _getResourcePath() & "/workingViewTest2";
+			var viewDirs      = _getResourcePath() & "/workingViewTest" & "," & _getResourcePath() & "/workingViewTest2";
 			var expectedOutput = "<h1>Hello universe</h1>";
 			var view           = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 
 			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
 
-			viewPaths = _getResourcePath() & "/workingViewTest2" & "," & _getResourcePath() & "/workingViewTest";
+			viewDirs = _getResourcePath() & "/workingViewTest2" & "," & _getResourcePath() & "/workingViewTest";
 			expectedOutput = "<h1>Hello world</h1>";
 			view = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			super.assertEquals( expectedOutput, view.render( view="anotherFolder.someView" ) );
@@ -85,11 +85,11 @@
 
 	<cffunction name="t05_views_shouldBePreventedFromAlteringVariablesScope" returntype="void">
 		<cfscript>
-			var viewPaths = _getResourcePath() & "/workingViewTest";
-			var viewPath  = Replace( ExpandPath( viewPaths & '/badViews/alteringVariablesScope.cfm' ), '\', '/', 'all' );
+			var viewDirs = _getResourcePath() & "/workingViewTest";
+			var viewPath  = Replace( ExpandPath( viewDirs & '/badViews/alteringVariablesScope.cfm' ), '\', '/', 'all' );
 			var failed    = false;
 			var view      = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			try {
@@ -106,11 +106,11 @@
 
 	<cffunction name="t06_view_shouldOnlyBePassedDataThatHasBeenCfParamd" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var viewDirs      = _getResourcePath() & "/workingViewTest";
 			var data           = StructNew();
 			var failed         = false;
 			var view           = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			data.someVar                      = "Testing 123";
@@ -132,11 +132,11 @@
 
 	<cffunction name="t07_views_shouldBeAbleToRenderOtherViews" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
+			var viewDirs      = _getResourcePath() & "/workingViewTest";
 			var expectedOutput = "<h1>Testing 123</h1>";
 			var data           = StructNew();
 			var view           = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			data.someVar = "Testing 123";
@@ -148,10 +148,10 @@
 	<cffunction name="t08_view_shouldThrowError_whenParamRequiredByAViewWithNoDefault_isNotPassedToTheView" returntype="void">
 		<cfscript>
 			var expectedErrorMessage = "The argument 'someVar' is required by aView.cfm but was not passed to the render() method.";
-			var viewPaths            = _getResourcePath() & "/workingViewTest";
+			var viewDirs            = _getResourcePath() & "/workingViewTest";
 			var failed               = false;
 			var view                 = _getView().init(
-				viewPaths = viewPaths
+				viewDirs = viewDirs
 			);
 
 			try {
@@ -167,8 +167,8 @@
 
 	<cffunction name="t09_view_shouldAssimilateNewViewsAutomagically_whenInDevMode" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
-			var newFile        = viewPaths & "/new.cfm";
+			var viewDirs      = _getResourcePath() & "/workingViewTest";
+			var newFile        = viewDirs & "/new.cfm";
 			var expectedOutput = "<h1>Testing 123</h1>";
 			var data           = StructNew();
 			var view           = "";
@@ -176,7 +176,7 @@
 			_fileDelete( newFile );
 
 			view = _getView().init(
-				  viewPaths = viewPaths
+				  viewDirs = viewDirs
 				, devMode   = true
 			);
 
@@ -190,12 +190,12 @@
 
 	<cffunction name="t10_views_shouldHaveAccessToSuppliedUdfLibraries" returntype="void">
 		<cfscript>
-			var viewPaths      = _getResourcePath() & "/workingViewTest";
-			var udfPaths       = _getResourcePath() & "/udfs1," & _getResourcePath() & "/udfs2";
+			var viewDirs      = _getResourcePath() & "/workingViewTest";
+			var udfDirs       = _getResourcePath() & "/udfs1," & _getResourcePath() & "/udfs2";
 			var expectedOutput = "<h1>Hello world</h1><p>Today's date</p>";
 			var view           = _getView().init(
-				  viewPaths = viewPaths
-				, udfPaths  = udfPaths
+				  viewDirs = viewDirs
+				, udfDirs  = udfDirs
 			);
 
 			super.assertEquals( expectedOutput, view.render( "udfTest" ) );

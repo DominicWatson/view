@@ -1,21 +1,21 @@
 <cfcomponent output="false" extends="util.Base">
 
 	<cfscript>
-		_views     = StructNew();
-		_viewPaths = ArrayNew(1);
-		_devMode   = false;
+		_views    = StructNew();
+		_viewDirs = ArrayNew(1);
+		_devMode  = false;
 	</cfscript>
 
 	<cffunction name="init" access="public" returntype="any" output="false" hint="Constructor. This method should be called with to instantiate the View framework. Ideally, the result of this call should be cached in some permanent scope such as the Application scope. Instantiating per request will be costly.">
-		<cfargument name="viewPaths" type="string"  required="true"                  hint="Comma separated list of directories that contain views. When their local paths are the same, views in directories that come later in the list will override those from directories earlier in the list." />
-		<cfargument name="udfPaths"  type="string"  required="false" default=""      hint="Comma separated list of directories that contain cfm files with user defined functions. These functions will be available to all views." />
-		<cfargument name="devMode"   type="boolean" required="false" default="false" hint="Whether or not to run in Dev mode (default false). In dev mode, the View framework will automatically reload changes you make to your source files." />
+		<cfargument name="viewDirs" type="string"  required="true"                  hint="Comma separated list of directories that contain views. When their local paths are the same, views in directories that come later in the list will override those from directories earlier in the list." />
+		<cfargument name="udfDirs"  type="string"  required="false" default=""      hint="Comma separated list of directories that contain cfm files with user defined functions. These functions will be available to all views." />
+		<cfargument name="devMode"  type="boolean" required="false" default="false" hint="Whether or not to run in Dev mode (default false). In dev mode, the View framework will automatically reload changes you make to your source files." />
 
 		<cfscript>
-			_setViewPaths( viewPaths );
+			_setViewDirs( viewDirs );
 			_setDevMode( devMode );
 
-			_initViewRenderer( udfPaths );
+			_initViewRenderer( udfDirs );
 			_loadViews();
 
 			return this;
@@ -39,7 +39,7 @@
 <!--- private --->
 	<cffunction name="_loadViews" access="private" returntype="void" output="false">
 		<cfscript>
-			var viewPaths   = _getViewPaths();
+			var viewDirs   = _getViewDirs();
 			var files       = "";
 			var filePath    = "";
 			var fileContent = "";
@@ -48,14 +48,14 @@
 			var i           = "";
 			var n           = "";
 
-			for( i=1; i LTE ArrayLen( viewPaths ); i++ ){
-				files = $directoryList( viewPaths[i], "*.cfm" )
+			for( i=1; i LTE ArrayLen( viewDirs ); i++ ){
+				files = $directoryList( viewDirs[i], "*.cfm" )
 
 				for( n=1; n LTE files.recordCount; n++ ){
 					filePath    = $normalizeUnixAndWindowsPaths( $listAppend( files.directory[n], files.name[n], '/' ) );
 					fileContent = $fileRead( filePath );
 
-					view                           = _convertFullViewPathToViewName( filePath, viewPaths[i] );
+					view                           = _convertFullViewPathToViewName( filePath, viewDirs[i] );
 					views[ view ]                  = StructNew();
 					views[ view ].path             = filePath;
 					views[ view ].args             = _parseArgsFromCfParam( fileContent );
@@ -155,10 +155,10 @@
 	</cffunction>
 
 	<cffunction name="_initViewRenderer" access="private" returntype="void" output="false">
-		<cfargument name="udfPaths"  type="string"  required="true" />
+		<cfargument name="udfDirs"  type="string"  required="true" />
 
 		<cfscript>
-			var udfs = CreateObject( "component", "util.UdfWrapper" ).init( udfPaths = udfPaths )
+			var udfs = CreateObject( "component", "util.UdfWrapper" ).init( udfDirs = udfDirs )
 			var vr   = CreateObject( "component", "util.ViewRenderer" ).init( framework = this, udfs = udfs );
 
 			_setViewRenderer( vr );
@@ -182,19 +182,19 @@
 		<cfset _views = views />
 	</cffunction>
 
-	<cffunction name="_getViewPaths" access="private" returntype="array" output="false">
-		<cfreturn _viewPaths />
+	<cffunction name="_getViewDirs" access="private" returntype="array" output="false">
+		<cfreturn _viewDirs />
 	</cffunction>
-	<cffunction name="_setViewPaths" access="private" returntype="void" output="false">
-		<cfargument name="viewPaths" type="string" required="true" />
+	<cffunction name="_setViewDirs" access="private" returntype="void" output="false">
+		<cfargument name="viewDirs" type="string" required="true" />
 
 		<cfscript>
 			var i = 0;
 
-			_viewPaths = ListToArray( viewPaths );
+			_viewDirs = ListToArray( viewDirs );
 
-			for( i=1; i LTE ArrayLen( _viewPaths ); i++ ){
-				_viewPaths[i] = $normalizeUnixAndWindowsPaths( $ensureFullDirectoryPath( _viewPaths[i] ) );
+			for( i=1; i LTE ArrayLen( _viewDirs ); i++ ){
+				_viewDirs[i] = $normalizeUnixAndWindowsPaths( $ensureFullDirectoryPath( _viewDirs[i] ) );
 			}
 		</cfscript>
 	</cffunction>
